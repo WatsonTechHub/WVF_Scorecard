@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Watson Value Framework Scorecard — Watson Tech Hub</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    background: #f0f3f5;
+    padding: 32px 16px 48px;
+    min-height: 100vh;
+  }
+
+  .card {
+    background: #fff;
+    border-radius: 14px;
+    padding: 32px 36px;
+    max-width: 780px;
+    margin: 0 auto;
+    box-shadow: 0 4px 24px rgba(22,35,47,0.10);
+  }
+
+  /* ── Header ── */
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 22px;
+  }
+
+  .header-eyebrow {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    color: #e8722c;
+    margin-bottom: 6px;
+    text-transform: uppercase;
+  }
+
+  .header-title {
+    font-size: 26px;
+    font-weight: 800;
+    color: #16232f;
+    line-height: 1.1;
+  }
+
+  .header-url {
+    font-size: 12px;
+    color: #5b6b76;
+    margin-top: 4px;
+  }
+
+  .header-right {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 8px;
+  }
+
+  .logo {
+    width: 52px;
+    height: 52px;
+    object-fit: contain;
+    border-radius: 8px;
+  }
+
+  .score-badge {
+    background: #16232f;
+    color: #fff;
+    border-radius: 999px;
+    padding: 5px 14px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+  }
+
+  /* ── Scoring guide ── */
+  .guide {
+    background: #f8f9f9;
+    border: 1px solid #e2e6e8;
+    border-radius: 10px;
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+  }
+
+  .guide-label {
+    font-size: 11px;
+    font-weight: 700;
+    color: #16232f;
+    white-space: nowrap;
+  }
+
+  .guide-items {
+    display: flex;
+    gap: 14px;
+    flex-wrap: wrap;
+  }
+
+  .guide-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 10.5px;
+    color: #5b6b76;
+  }
+
+  .guide-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  /* ── Pillar rows ── */
+  .pillar {
+    background: #fff;
+    border: 1px solid #e2e6e8;
+    border-radius: 10px;
+    padding: 14px 18px;
+    margin-bottom: 10px;
+    display: grid;
+    grid-template-columns: 36px 1fr 92px;
+    column-gap: 14px;
+    align-items: start;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+
+  .pillar:focus-within {
+    border-color: #16232f;
+    box-shadow: 0 0 0 3px rgba(22,35,47,0.08);
+  }
+
+  .pillar-num {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: #16232f;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 800;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  .pillar-name {
+    font-size: 14px;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+    color: #16232f;
+  }
+
+  .pillar-question {
+    font-size: 11.5px;
+    color: #5b6b76;
+    margin-top: 2px;
+    margin-bottom: 8px;
+    font-style: italic;
+  }
+
+  .pillar-descriptors {
+    font-size: 10.5px;
+    color: #5b6b76;
+    line-height: 1.6;
+  }
+
+  .pillar-descriptors span { font-weight: 700; margin-right: 4px; }
+
+  .score-col {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-self: end;
+    gap: 5px;
+  }
+
+  .score-label {
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    color: #5b6b76;
+    text-align: center;
+    line-height: 1.4;
+  }
+
+  .score-input {
+    width: 56px;
+    height: 44px;
+    text-align: center;
+    font-size: 20px;
+    font-weight: 800;
+    color: #16232f;
+    border: 2px solid #c8d0d8;
+    border-radius: 8px;
+    background: #f8f9f9;
+    outline: none;
+    transition: border-color 0.2s, background 0.2s;
+    -moz-appearance: textfield;
+  }
+
+  .score-input::-webkit-inner-spin-button,
+  .score-input::-webkit-outer-spin-button { -webkit-appearance: none; }
+
+  .score-input:focus {
+    border-color: #16232f;
+    background: #fff;
+  }
+
+  .score-input.filled {
+    border-color: #16232f;
+    background: #fff;
+    color: #16232f;
+  }
+
+  /* ── Total bar ── */
+  .total-bar {
+    background: #16232f;
+    border-radius: 10px;
+    padding: 16px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin: 16px 0;
+  }
+
+  .total-label {
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    color: #8ec7dd;
+    text-transform: uppercase;
+  }
+
+  .total-sub {
+    font-size: 11.5px;
+    color: #c7d3d9;
+    margin-top: 3px;
+  }
+
+  .total-circle {
+    width: 74px;
+    height: 74px;
+    border-radius: 50%;
+    background: #fff;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+    transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1);
+  }
+
+  .total-circle.pop {
+    transform: scale(1.12);
+  }
+
+  .total-num {
+    font-size: 24px;
+    font-weight: 800;
+    color: #16232f;
+    transition: color 0.3s;
+  }
+
+  .total-denom {
+    font-size: 9px;
+    font-weight: 600;
+    color: #5b6b76;
+    margin-top: 1px;
+  }
+
+  /* ── Decision zones ── */
+  .zones-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    color: #16232f;
+    margin-bottom: 8px;
+  }
+
+  .zones-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+
+  .zone {
+    background: #fff;
+    border-radius: 10px;
+    padding: 12px 14px;
+    border: 2px solid #e2e6e8;
+    transition: border-color 0.3s, box-shadow 0.3s, transform 0.2s;
+  }
+
+  .zone.active {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(22,35,47,0.12);
+  }
+
+  .zone-badge {
+    display: inline-block;
+    color: #fff;
+    font-size: 9.5px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    border-radius: 999px;
+    padding: 3px 10px;
+    margin-bottom: 7px;
+  }
+
+  .zone-name {
+    font-size: 12.5px;
+    font-weight: 800;
+    color: #16232f;
+    margin-bottom: 5px;
+  }
+
+  .zone-desc {
+    font-size: 10px;
+    color: #5b6b76;
+    line-height: 1.5;
+  }
+
+  /* ── Decision banner ── */
+  .decision-banner {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    background: #f8f9f9;
+    border: 1px solid #e2e6e8;
+    border-radius: 10px;
+    padding: 14px 16px;
+    margin-bottom: 16px;
+    transition: background 0.3s;
+  }
+
+  .decision-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    color: #5b6b76;
+  }
+
+  .decision-value {
+    font-size: 14px;
+    font-weight: 800;
+    color: #5b6b76;
+    transition: color 0.3s;
+  }
+
+  /* ── Progress bar ── */
+  .progress-wrap {
+    background: #e8edf0;
+    border-radius: 999px;
+    height: 6px;
+    margin-bottom: 18px;
+    overflow: hidden;
+  }
+
+  .progress-bar {
+    height: 100%;
+    border-radius: 999px;
+    background: #16232f;
+    width: 0%;
+    transition: width 0.4s ease, background 0.3s;
+  }
+
+  /* ── Reset button ── */
+  .reset-btn {
+    display: block;
+    margin: 0 auto 16px;
+    background: transparent;
+    border: 1.5px solid #c8d0d8;
+    border-radius: 8px;
+    padding: 8px 20px;
+    font-size: 11px;
+    font-weight: 700;
+    color: #5b6b76;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    text-transform: uppercase;
+    transition: border-color 0.2s, color 0.2s;
+  }
+
+  .reset-btn:hover {
+    border-color: #16232f;
+    color: #16232f;
+  }
+
+  /* ── Footer ── */
+  .footer-main {
+    text-align: center;
+    font-size: 11px;
+    color: #5b6b76;
+    margin-bottom: 4px;
+  }
+
+  .footer-sub {
+    text-align: center;
+    font-size: 9.5px;
+    color: #8a97a1;
+    font-style: italic;
+  }
+
+  /* ── Responsive ── */
+  @media (max-width: 560px) {
+    body { padding: 16px 12px 40px; }
+    .card { padding: 20px 16px; }
+    .header-title { font-size: 20px; }
+    .pillar { grid-template-columns: 28px 1fr 72px; column-gap: 10px; }
+    .zones-grid { grid-template-columns: 1fr; }
+    .guide { flex-direction: column; gap: 8px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="card">
+
+  <!-- Header -->
+  <div class="header">
+    <div>
+      <div class="header-eyebrow">Watson Value Framework</div>
+      <div class="header-title">Technology Scoring Scorecard</div>
+      <div class="header-url">watsontechhub.com</div>
+    </div>
+    <div class="header-right">
+      <img src="https://via.placeholder.com/52x52/16232f/e8722c?text=WTH" alt="Watson Tech Hub logo" class="logo" id="wth-logo">
+      <div class="score-badge">TOTAL SCORE&nbsp;0–50</div>
+    </div>
+  </div>
+
+  <!-- Scoring guide -->
+  <div class="guide">
+    <div class="guide-label">SCORING GUIDE: Enter 0–10 for each pillar</div>
+    <div class="guide-items">
+      <div class="guide-item">
+        <span class="guide-dot" style="background:#b34a42"></span>
+        <strong style="color:#16232f">0–3</strong>&nbsp;Does not meet
+      </div>
+      <div class="guide-item">
+        <span class="guide-dot" style="background:#e8722c"></span>
+        <strong style="color:#16232f">4–6</strong>&nbsp;Partially meets
+      </div>
+      <div class="guide-item">
+        <span class="guide-dot" style="background:#3f8f6b"></span>
+        <strong style="color:#16232f">7–10</strong>&nbsp;Strongly meets
+      </div>
+    </div>
+  </div>
+
+  <!-- Progress bar -->
+  <div class="progress-wrap">
+    <div class="progress-bar" id="progress-bar"></div>
+  </div>
+
+  <!-- Pillar rows -->
+  <div id="pillars-container"></div>
+
+  <!-- Total score bar -->
+  <div class="total-bar">
+    <div>
+      <div class="total-label">Total Score</div>
+      <div class="total-sub">Calculated automatically when all five pillars are scored</div>
+    </div>
+    <div class="total-circle" id="total-circle">
+      <div class="total-num" id="total-num">–</div>
+      <div class="total-denom">/ 50</div>
+    </div>
+  </div>
+
+  <!-- Decision zones -->
+  <div class="zones-label">DECISION FRAMEWORK · Based on your total score</div>
+  <div class="zones-grid">
+    <div class="zone" id="zone-pass">
+      <div class="zone-badge" style="background:#b34a42">0–19</div>
+      <div class="zone-name">Pass On It</div>
+      <div class="zone-desc">This technology does not justify the investment right now. One or more critical pillars scored too low. Revisit in 6–12 months.</div>
+    </div>
+    <div class="zone" id="zone-caution">
+      <div class="zone-badge" style="background:#e8722c">20–34</div>
+      <div class="zone-name">Proceed With Caution</div>
+      <div class="zone-desc">Real potential but meaningful gaps remain. Resolve the lowest-scoring pillars before committing.</div>
+    </div>
+    <div class="zone" id="zone-buy">
+      <div class="zone-badge" style="background:#3f8f6b">35–50</div>
+      <div class="zone-name">Confident Buy</div>
+      <div class="zone-desc">Passes the Watson Value Framework — a purposeful investment that will compound over time.</div>
+    </div>
+  </div>
+
+  <!-- Decision banner -->
+  <div class="decision-banner" id="decision-banner">
+    <span class="decision-label">DECISION:</span>
+    <span class="decision-value" id="decision-value">Enter all five scores to see your decision.</span>
+  </div>
+
+  <!-- Reset button -->
+  <button class="reset-btn" id="reset-btn">↺ Reset Scores</button>
+
+  <!-- Footer -->
+  <div class="footer-main">Watson Tech Hub · Technology Beyond the Specs · watsontechhub.com</div>
+  <div class="footer-sub">The Watson Value Framework is an editorial evaluation lens, not financial advice. Scores reflect personal utility, not market value.</div>
+
+</div>
+
+<script>
+const PILLARS = [
+  {
+    num: '01', name: 'PROBLEM',
+    question: 'Does it solve a real problem in your actual life?',
+    low:  'No clear friction point identified.',
+    mid:  'Solves a minor or occasional issue.',
+    high: 'Eliminates a significant daily bottleneck.'
+  },
+  {
+    num: '02', name: 'FRICTION',
+    question: 'Does it remove friction — or create more of it?',
+    low:  'Adds complexity or requires constant management.',
+    mid:  'Mixed — removes some friction, adds other.',
+    high: 'Makes the right behavior the easy behavior.'
+  },
+  {
+    num: '03', name: 'ADOPTION',
+    question: 'Can you realistically build it into your life?',
+    low:  'Requires major behavior change or complex setup.',
+    mid:  'Adoptable with some effort and adjustment.',
+    high: 'Fits naturally into existing daily routine.'
+  },
+  {
+    num: '04', name: 'LONGEVITY',
+    question: 'Will it still matter in two years?',
+    low:  'Likely obsolete or trend-dependent.',
+    mid:  'Useful now, uncertain long-term value.',
+    high: 'Durable investment — will compound over time.'
+  },
+  {
+    num: '05', name: 'IMPACT',
+    question: 'Does it genuinely help you grow?',
+    low:  'No meaningful improvement to output or life.',
+    mid:  'Some positive impact in specific contexts.',
+    high: 'Measurably improves how you work, create, or live.'
+  }
+];
+
+const scores = [null, null, null, null, null];
+
+// ── Build pillar rows ────────────────────────────────────────
+const container = document.getElementById('pillars-container');
+
+PILLARS.forEach((p, i) => {
+  const row = document.createElement('div');
+  row.className = 'pillar';
+  row.innerHTML = `
+    <div class="pillar-num">${p.num}</div>
+    <div>
+      <div class="pillar-name">${p.name}</div>
+      <div class="pillar-question">${p.question}</div>
+      <div class="pillar-descriptors">
+        <div><span style="color:#b34a42">0–3</span> ${p.low}</div>
+        <div><span style="color:#e8722c">4–6</span> ${p.mid}</div>
+        <div><span style="color:#3f8f6b">7–10</span> ${p.high}</div>
+      </div>
+    </div>
+    <div class="score-col">
+      <div class="score-label">YOUR SCORE<br><span style="font-weight:400">(0–10)</span></div>
+      <input
+        class="score-input"
+        type="number"
+        min="0" max="10"
+        placeholder="–"
+        aria-label="${p.name} score"
+        id="input-${i}"
+      >
+    </div>
+  `;
+  container.appendChild(row);
+
+  const input = row.querySelector('input');
+  input.addEventListener('input', () => handleInput(i, input));
+  input.addEventListener('blur',  () => handleBlur(i, input));
+});
+
+// ── Score logic ───────────────────────────────────────────────
+function handleInput(i, input) {
+  let v = input.value;
+  if (v === '' || v === '-') { scores[i] = null; update(); return; }
+  let n = parseInt(v, 10);
+  if (isNaN(n)) { scores[i] = null; update(); return; }
+  if (n < 0)  { n = 0;  input.value = '0';  }
+  if (n > 10) { n = 10; input.value = '10'; }
+  scores[i] = n;
+  input.classList.toggle('filled', true);
+  update();
+}
+
+function handleBlur(i, input) {
+  if (input.value === '' || input.value === '-') {
+    scores[i] = null;
+    input.classList.remove('filled');
+    update();
+  }
+}
+
+function update() {
+  const allFilled = scores.every(s => s !== null);
+  const filled    = scores.filter(s => s !== null).length;
+  const total     = scores.reduce((a, b) => a + (b || 0), 0);
+
+  // Progress bar
+  const pct = (filled / 5) * 100;
+  const bar = document.getElementById('progress-bar');
+  bar.style.width = pct + '%';
+  bar.style.background = allFilled
+    ? (total <= 19 ? '#b34a42' : total <= 34 ? '#e8722c' : '#3f8f6b')
+    : '#16232f';
+
+  // Total circle
+  const numEl    = document.getElementById('total-num');
+  const circleEl = document.getElementById('total-circle');
+  numEl.textContent = allFilled ? total : '–';
+
+  if (allFilled) {
+    numEl.style.color = total <= 19 ? '#b34a42' : total <= 34 ? '#e8722c' : '#3f8f6b';
+    circleEl.classList.add('pop');
+    setTimeout(() => circleEl.classList.remove('pop'), 300);
+  } else {
+    numEl.style.color = '#16232f';
+  }
+
+  // Decision zones
+  const zonePass    = document.getElementById('zone-pass');
+  const zoneCaution = document.getElementById('zone-caution');
+  const zoneBuy     = document.getElementById('zone-buy');
+  const decisionEl  = document.getElementById('decision-value');
+
+  [zonePass, zoneCaution, zoneBuy].forEach(z => {
+    z.classList.remove('active');
+    z.style.borderColor = '#e2e6e8';
+  });
+
+  if (allFilled) {
+    if (total <= 19) {
+      zonePass.style.borderColor = '#b34a42';
+      zonePass.classList.add('active');
+      decisionEl.textContent = 'Pass On It';
+      decisionEl.style.color = '#b34a42';
+    } else if (total <= 34) {
+      zoneCaution.style.borderColor = '#e8722c';
+      zoneCaution.classList.add('active');
+      decisionEl.textContent = 'Proceed With Caution';
+      decisionEl.style.color = '#e8722c';
+    } else {
+      zoneBuy.style.borderColor = '#3f8f6b';
+      zoneBuy.classList.add('active');
+      decisionEl.textContent = 'Confident Buy';
+      decisionEl.style.color = '#3f8f6b';
+    }
+  } else {
+    decisionEl.textContent = 'Enter all five scores to see your decision.';
+    decisionEl.style.color = '#5b6b76';
+  }
+}
+
+// ── Reset ─────────────────────────────────────────────────────
+document.getElementById('reset-btn').addEventListener('click', () => {
+  scores.fill(null);
+  for (let i = 0; i < 5; i++) {
+    const inp = document.getElementById(`input-${i}`);
+    inp.value = '';
+    inp.classList.remove('filled');
+  }
+  update();
+});
+
+// ── Logo swap (replace placeholder with real logo if hosted) ──
+// If you have the wth-logo.png uploaded to your Squarespace assets,
+// replace the src below with the actual asset URL.
+// document.getElementById('wth-logo').src = '/assets/wth-logo.png';
+
+</script>
+</body>
+</html>
